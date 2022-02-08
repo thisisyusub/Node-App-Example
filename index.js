@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const config = require('config');
+const startupDebugger = require('debug')('app:startup');
 
 const app = express();
 
@@ -9,7 +10,8 @@ console.log(`Application Name: ${config.get('name')}`);
 // middlewares
 if (app.get('env') === 'development') {
     app.use(morgan('tiny'));
-    console.log('Morgan enabled.!');
+    console.log('Morgan enabled.');
+    startupDebugger('Morgan enabled!');
 }
 
 
