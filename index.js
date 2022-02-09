@@ -2,8 +2,15 @@ const express = require('express');
 const morgan = require('morgan');
 const config = require('config');
 const startupDebugger = require('debug')('app:startup');
+const mongoose = require('mongoose');
 
-const coursesRoute = require('./routes/courses');
+
+mongoose.connect('mongodb://localhost/vidly').then(() => {
+    console.log('Connected to MongoDB');
+}).catch(err => console.log('MongoDB error: ', err));
+
+
+const genresRoute = require('./routes/genres');
 
 const app = express();
 
@@ -19,7 +26,7 @@ if (app.get('env') === 'development') {
 }
 
 // app routes registration
-app.use('/api/courses', coursesRoute);
+app.use('/api/genres', genresRoute);
 
 
 const port = process.env.PORT || 3000;
