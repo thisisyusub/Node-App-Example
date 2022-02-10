@@ -1,20 +1,7 @@
 const router = require('express').Router();
-const { response } = require('express');
-const mongoose = require('mongoose');
 const courseDebugger = require('debug')('app:course')
+const { Genre, validate } = require('../models/genre');
 
-const Genre = mongoose.model('Genre',
-    new mongoose.Schema(
-        {
-            name: {
-                type: String,
-                required: true,
-                minlength: 5,
-                maxlength: 50,
-            }
-        }
-    ),
-);
 
 router.get('/', async (req, res, next) => {
     const genres = await Genre.find().select('name');
@@ -40,10 +27,11 @@ router.get('/:id', async (req, res, next) => {
 
 
 router.post('/', async (req, res, next) => {
-    if (!req.body.name) {
+    const { error } = validate(req.body);
+
+    if (error) {
         res.statusCode = 400;
-        res.send('Name required!');
-        return;
+        return res.send(error.details[0].message);
     }
 
     const genre = new Genre({
@@ -55,6 +43,13 @@ router.post('/', async (req, res, next) => {
 });
 
 router.put('/:id', async (req, res, next) => {
+    const { error } = validate(req.body);
+
+    if (error) {
+        res.statusCode = 400;
+        return res.send(error.details[0].message);
+    }
+
     const genre = await Genre.findByIdAndUpdate(
         req.params.id,
         { name: req.body.name },
