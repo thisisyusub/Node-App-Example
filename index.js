@@ -4,13 +4,16 @@ const config = require('config');
 const startupDebugger = require('debug')('app:startup');
 const mongoose = require('mongoose');
 
+const genresRoute = require('./routes/genres');
+const customersRoute = require('./routes/customers');
+
 
 mongoose.connect('mongodb://localhost/vidly').then(() => {
     console.log('Connected to MongoDB');
 }).catch(err => console.log('MongoDB error: ', err));
 
 
-const genresRoute = require('./routes/genres');
+
 
 const app = express();
 
@@ -27,6 +30,7 @@ if (app.get('env') === 'development') {
 
 // app routes registration
 app.use('/api/genres', genresRoute);
+app.use('/api/customers', customersRoute);
 
 
 const port = process.env.PORT || 3000;
